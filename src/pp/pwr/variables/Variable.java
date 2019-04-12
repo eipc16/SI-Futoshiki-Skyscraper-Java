@@ -28,15 +28,15 @@ public abstract class Variable<T extends Comparable<T>> {
     public abstract String getName();
 
     public boolean isPredefined() {
-        return this.predefined;
+        return predefined;
     }
 
     public Domain getDomain() {
-        return this.domain;
+        return domain;
     }
 
     public T getValue() {
-        return this.value;
+        return value;
     }
 
     public void update(T value) {
@@ -45,17 +45,17 @@ public abstract class Variable<T extends Comparable<T>> {
 
 
     public void appendConstraint(ConstraintInterface constraint) {
-        this.constraints.add(constraint);
+        constraints.add(constraint);
     }
 
     public void appendConstrainedVariables(List<Variable> variable) {
-        this.constrainedVariables.addAll(variable);
+        constrainedVariables.addAll(variable);
     }
 
     public boolean validate() {
         ConstraintInterface constraint;
-        for(int i = 0; i < this.constraints.size(); i++) {
-            constraint = this.constraints.get(i);
+        for(int i = 0; i < constraints.size(); i++) {
+            constraint = constraints.get(i);
             if(!constraint.check()) {
                 return false;
             }
@@ -65,6 +65,10 @@ public abstract class Variable<T extends Comparable<T>> {
     }
 
     public Set getConstrainedVariables() {
-        return this.constrainedVariables;
+        return constrainedVariables;
+    }
+
+    public boolean equals(Variable other) {
+        return value.equals(other.value);
     }
 }

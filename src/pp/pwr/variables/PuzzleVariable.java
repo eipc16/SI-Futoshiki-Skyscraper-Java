@@ -2,7 +2,7 @@ package pp.pwr.variables;
 
 import pp.pwr.domains.Domain;
 
-public class PuzzleVariable extends Variable<Integer> implements Comparable<PuzzleVariable> {
+public class PuzzleVariable extends Variable<Integer> {
 
     private int row_position, column_position;
 
@@ -22,10 +22,5 @@ public class PuzzleVariable extends Variable<Integer> implements Comparable<Puzz
     @Override
     public String getName() {
         return String.format("%s%s", column_labels[column_position], row_labels[row_position]);
-    }
-
-    @Override
-    public int compareTo(PuzzleVariable puzzleVariable) {
-        return this.value.compareTo(puzzleVariable.value);
     }
 }

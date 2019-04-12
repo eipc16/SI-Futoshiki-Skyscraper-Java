@@ -1,11 +1,11 @@
 package pp.pwr.constraints;
 
-import com.sun.org.apache.xpath.internal.operations.Variable;
+import pp.pwr.variables.Variable;
 
 import java.util.List;
 
-public interface ConstraintInterface {
+public interface ConstraintInterface<T extends Comparable<T>> {
     boolean check();
 
-    List<Variable> getConstrained();
+    List<Variable<T>> getConstrained();
 }
