@@ -6,7 +6,7 @@ import pp.pwr.domains.Domain;
 import java.util.List;
 import java.util.Set;
 
-abstract class Variable<T extends Comparable<T>> {
+public abstract class Variable<T extends Comparable<T>> {
 
     T value;
 
