@@ -7,17 +7,16 @@ import pp.pwr.variables.PuzzleVariable;
 import pp.pwr.variables.Variable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class FutoshikiModel extends Model<Integer> {
 
     public FutoshikiModel(String filePath) {
-        super(0);
-        loadModel(filePath);
+        super(filePath,0);
+
+        loadModel();
     }
 
     void loadVariables(List<String> data) {
@@ -55,36 +54,8 @@ public class FutoshikiModel extends Model<Integer> {
             Variable<Integer> lower_variable = variableList.get(lower_row * dimensions + lower_col);
             Variable<Integer> higher_variable = variableList.get(higher_row * dimensions + higher_col);
 
-            lower_variable.appendConstrainedVariable(higher_variable);
-            higher_variable.appendConstrainedVariable(lower_variable);
-
             lower_variable.appendConstraint(new LowerValue<>(lower_variable, higher_variable, defaultValue));
             higher_variable.appendConstraint(new HigherValue<>(higher_variable, lower_variable, defaultValue));
-        }
-    }
-
-    void setUniqueConstraints() {
-        Variable<Integer> parentVariable;
-        List<Variable<Integer>> constrainedVariables;
-        for(int i = 0; i < variableList.size(); i++) {
-            constrainedVariables = new ArrayList<>();
-            parentVariable = variableList.get(i);
-
-            int row_start = i % dimensions;
-            int col_start = (i / dimensions) * dimensions;
-
-            for(int j = row_start; j < variableList.size(); j += dimensions) {
-                if(!variableList.get(j).equals(parentVariable)){
-                    constrainedVariables.add(variableList.get(j));
-                }
-            }
-
-            for(int j = col_start; j < col_start + dimensions; j++) {
-                if(!variableList.get(j).equals(parentVariable)){
-                    constrainedVariables.add(variableList.get(j));
-                }
-            }
-            parentVariable.appendConstraint(new Unique<>(parentVariable, constrainedVariables, defaultValue));
         }
     }
 

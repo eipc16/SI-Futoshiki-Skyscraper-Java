@@ -43,12 +43,9 @@ public abstract class Variable<T extends Comparable<T>> {
         this.value = value;
     }
 
-    public void appendConstraint(ConstraintInterface constraint) {
+    public void appendConstraint(ConstraintInterface<T> constraint) {
         constraints.add(constraint);
-    }
-
-    public void appendConstrainedVariable(Variable<T> variable) {
-        constrainedVariables.add(variable);
+        constrainedVariables.addAll(constraint.getConstrained());
     }
 
     public Set<Variable<T>> getConstrainedVariables() {

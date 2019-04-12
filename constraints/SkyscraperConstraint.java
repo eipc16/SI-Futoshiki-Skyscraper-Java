@@ -10,13 +10,12 @@ public class SkyscraperConstraint<T extends  Comparable<T>> implements Constrain
     T defaultValue;
 
     private Integer leftConstraint, rightContraint;
-    private char orientation;
 
-    public SkyscraperConstraint(List<Variable<T>> row, Integer leftConstraint, Integer rightContraint, char orientation, T defaultValue) {
+    public SkyscraperConstraint(List<Variable<T>> row, Integer leftConstraint, Integer rightConstraint, T defaultValue) {
         this.row = row;
         this.leftConstraint = leftConstraint;
-        this.rightContraint = rightContraint;
-        this.orientation = orientation;
+        this.rightContraint = rightConstraint;
+        this.defaultValue = defaultValue;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class SkyscraperConstraint<T extends  Comparable<T>> implements Constrain
     }
 
     @Override
-    public List<Variable> getConstrained() {
+    public List<Variable<T>> getConstrained() {
         return null;
     }
 }

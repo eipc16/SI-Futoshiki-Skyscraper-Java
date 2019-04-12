@@ -1,11 +1,9 @@
 package pp.pwr.algorithms;
 
-import pp.pwr.constraints.ConstraintInterface;
 import pp.pwr.models.Model;
 import pp.pwr.variables.Variable;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
@@ -39,8 +37,11 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
         for(T value: model.getDomain()) {
             variable.update(value);
 
-            if (validate(variable) && solve(depth + 1)) {
-                if (depth + 1 == activeVariablesSize && model.validate()) {
+            if (validate(variable) && model.validate() && solve(depth + 1)) {
+                if (depth + 1 == activeVariablesSize) {
+                    System.out.println(model.getBoard());
+                }
+                if (depth + 1 == activeVariablesSize) {
                     System.out.println("Found solution");
                     this.solutions += 1;
                     System.out.println(model.getBoard());

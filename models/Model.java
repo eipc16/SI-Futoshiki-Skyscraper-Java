@@ -1,6 +1,7 @@
 package pp.pwr.models;
 
 import pp.pwr.constraints.ConstraintInterface;
+import pp.pwr.constraints.Unique;
 import pp.pwr.variables.Variable;
 
 import java.io.BufferedReader;
@@ -17,19 +18,21 @@ import java.util.stream.Collectors;
 public abstract class Model<T extends Comparable<T>> {
 
     List<Variable<T>> variableList;
-    List<ConstraintInterface<T>> constraintList;
+    List<ConstraintInterface> constraintList;
     List<T> domain;
     T defaultValue;
 
+    String filePath;
     int dimensions;
 
-    public Model(T defaultValue) {
+    public Model(String filePath, T defaultValue) {
+        this.filePath = filePath;
         this.defaultValue = defaultValue;
         this.variableList = new ArrayList<>();
         this.constraintList = new ArrayList<>();
     }
 
-    void loadModel(String filePath) {
+    void loadModel() {
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = Files.newBufferedReader(Paths.get(filePath));
@@ -53,6 +56,31 @@ public abstract class Model<T extends Comparable<T>> {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    void setUniqueConstraints() {
+        Variable<T> parentVariable;
+        List<Variable<T>> constrainedVariables;
+        for(int i = 0; i < variableList.size(); i++) {
+            constrainedVariables = new ArrayList<>();
+            parentVariable = variableList.get(i);
+
+            int col_start = i % dimensions;
+            int row_start = (i / dimensions) * dimensions;
+
+            for(int j = col_start; j < variableList.size(); j += dimensions) {
+                if(!variableList.get(j).equals(parentVariable)){
+                    constrainedVariables.add(variableList.get(j));
+                }
+            }
+
+            for(int j = row_start; j < row_start + dimensions; j++) {
+                if(!variableList.get(j).equals(parentVariable)){
+                    constrainedVariables.add(variableList.get(j));
+                }
+            }
+            parentVariable.appendConstraint(new Unique<>(parentVariable, constrainedVariables, defaultValue));
         }
     }
 
