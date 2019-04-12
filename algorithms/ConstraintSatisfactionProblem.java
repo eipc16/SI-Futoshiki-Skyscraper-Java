@@ -33,6 +33,11 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
         if (depth == activeVariablesSize) {
             return true;
         }
+
+        if(iterations % 10000000 == 0) {
+            System.out.println(model.getBoard());
+        }
+
         Variable<T> variable = variablesToCheck.get(depth);
 
         for(T value: variable.getDomain()) {

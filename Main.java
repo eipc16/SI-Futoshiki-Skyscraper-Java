@@ -9,10 +9,10 @@ import pp.pwr.models.SkyscraperModel;
 public class Main {
 
     public static void main(String[] args) {
-	    String path = "pp/pwr/Data/Research/test_sky_6_0.txt";
+	    String path = "pp/pwr/Data/Research/test_futo_9_1.txt";
 
-	    //FutoshikiModel model = new FutoshikiModel(path);
-        SkyscraperModel model = new SkyscraperModel(path);
+	    FutoshikiModel model = new FutoshikiModel(path);
+        //SkyscraperModel model = new SkyscraperModel(path);
 
         ConstraintSatisfactionProblem bt = new BackTracking(model);
         ConstraintSatisfactionProblem fc = new ForwardChecking<>(model);

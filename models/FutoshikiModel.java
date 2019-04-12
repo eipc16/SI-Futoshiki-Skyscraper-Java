@@ -59,6 +59,9 @@ public class FutoshikiModel extends Model<Integer> {
                 Variable<Integer> lower_variable = variableList.get(lower_row * dimensions + lower_col);
                 Variable<Integer> higher_variable = variableList.get(higher_row * dimensions + higher_col);
 
+                higher_variable.removePossibleValue(domain.get(0));
+                lower_variable.removePossibleValue(domain.get(domain.size() - 1));
+
                 lower_variable.appendConstrainedVariable(higher_variable);
                 higher_variable.appendConstrainedVariable(lower_variable);
 
