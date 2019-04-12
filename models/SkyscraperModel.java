@@ -26,7 +26,9 @@ public class SkyscraperModel extends Model<Integer> {
     private void initVariables() {
         for(int i = 0; i < dimensions; i++ ) {
             for(int j = 0; j < dimensions; j++) {
-                variableList.add(new PuzzleVariable(defaultValue, j, i, false));
+                Variable<Integer> variable = new PuzzleVariable(defaultValue, j, i, false);
+                variable.setDomain(new ArrayList<>(IntStream.rangeClosed(1, dimensions).boxed().collect(Collectors.toList())));
+                variableList.add(variable);
             }
         }
     }
@@ -43,37 +45,54 @@ public class SkyscraperModel extends Model<Integer> {
         List<Variable<Integer>> row;
         int row_start;
 
-        for(int i = 0; i < dimensions; i++) {
-
+        for(int i = 0; i < variableList.size(); i++) {
             column = new ArrayList<>();
             for(int j = i % dimensions; j < variableList.size(); j += dimensions) {
                 column.add(variableList.get(j));
-            }
-            constraintList.add(new SkyscraperConstraint<>(column, constraintValues.get("G").get(i), constraintValues.get("D").get(i), defaultValue));
 
-            row_start = i * dimensions;
+                if(i == 0) {
+                    if (constraintValues.get("L").get(j / dimensions) == 1) {
+                        variableList.get(j).update(variableList.get(j).getMaxPossible());
+                        variableList.get(j).setPredefined();
+                    }
+                } else if (i == variableList.size() - 1) {
+                    if (constraintValues.get("P").get(j / dimensions) == 1) {
+                        variableList.get(j).update(variableList.get(j).getMaxPossible());
+                        variableList.get(j).setPredefined();
+                    }
+                }
+            }
+
+            variableList.get(i).appendConstraint(new SkyscraperConstraint<>(column, constraintValues.get("G").get(i % dimensions), constraintValues.get("D").get(i % dimensions), defaultValue));
+            variableList.get(i).appendConstrainedVariables(column);
+
+            row_start = (i / dimensions) * dimensions;
 
             row = new ArrayList<>();
             for(int j = row_start; j < row_start + dimensions; j++) {
                 row.add(variableList.get(j));
-            }
-            constraintList.add(new SkyscraperConstraint<>(row, constraintValues.get("L").get(i), constraintValues.get("P").get(i), defaultValue));
-        }
-    }
 
-    @Override
-    public boolean validate() {
-        if(super.validate()) {
-            for(ConstraintInterface cons: constraintList) {
-                if(!cons.check()) {
-                    return false;
+                if(i == 0) {
+                    if (constraintValues.get("G").get(j % dimensions) == 1) {
+                        variableList.get(j).update(variableList.get(j).getMaxPossible());
+                        variableList.get(j).setPredefined();
+                    }
+                } else if (i == variableList.size() - 1) {
+                    if (constraintValues.get("D").get(j % dimensions) == 1) {
+                        variableList.get(j).update(variableList.get(j).getMaxPossible());
+                        variableList.get(j).setPredefined();
+                    }
                 }
             }
-
-            return true;
+            variableList.get(i).appendConstraint(new SkyscraperConstraint<>(row, constraintValues.get("L").get(i / dimensions), constraintValues.get("P").get(i / dimensions), defaultValue));
+            variableList.get(i).appendConstrainedVariables(row);
         }
 
-        return false;
+        for(int i = 0; i < variableList.size(); i++) {
+            if(variableList.get(i).isPredefined()) {
+                System.out.println(variableList.get(i).getName());
+            }
+        }
     }
 
     @Override

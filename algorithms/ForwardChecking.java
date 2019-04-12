@@ -11,12 +11,16 @@ public class ForwardChecking<T extends Comparable<T>> extends ConstraintSatisfac
     public boolean hasPossibleValue(Variable<T> variable) {
         boolean validValue;
 
-        for(T value: model.getDomain()) {
+        if (variable.isPredefined()) {
+            return true;
+        }
+
+        for(T value: variable.getDomain()) {
             variable.update(value);
 
             validValue = variable.validate();
 
-            if(validValue) {
+            if (validValue) {
                 variable.update(defaultValue);
                 return true;
             }

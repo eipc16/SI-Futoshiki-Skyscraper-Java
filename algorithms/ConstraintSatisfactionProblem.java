@@ -13,7 +13,7 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     protected T defaultValue;
 
     private double time;
-    private int iterations, solutions;
+    private int iterations, solutions, backtracks;
 
     public ConstraintSatisfactionProblem(Model<T> model) {
         this.model = model;
@@ -23,24 +23,22 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
 
         this.time = 0;
         this.iterations = 0;
+        this.backtracks = 0;
         this.solutions = 0;
     }
 
     private boolean solve(int depth) {
-        this.iterations += 1;
+        this.iterations++;
 
         if (depth == activeVariablesSize) {
             return true;
         }
         Variable<T> variable = variablesToCheck.get(depth);
 
-        for(T value: model.getDomain()) {
+        for(T value: variable.getDomain()) {
             variable.update(value);
 
-            if (validate(variable) && model.validate() && solve(depth + 1)) {
-                if (depth + 1 == activeVariablesSize) {
-                    System.out.println(model.getBoard());
-                }
+            if (validate(variable) && solve(depth + 1)) {
                 if (depth + 1 == activeVariablesSize) {
                     System.out.println("Found solution");
                     this.solutions += 1;
@@ -53,7 +51,6 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
                 }
             }
         }
-
         variable.update(model.getDefaultValue());
         return false;
     }
@@ -67,7 +64,7 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     }
 
     public String getInfo() {
-        return String.format("Elapsed time: %5.2f | Iterations: %8d | Solutions: %4d", (System.nanoTime() - time) / 1000000000, iterations, solutions);
+        return String.format("Elapsed time: %5.2f | Iterations: %8d | Backtracks: %8d | Solutions: %4d", (System.nanoTime() - time) / 1000000000, iterations, backtracks, solutions);
     }
 
     boolean validate(Variable<T> variable) {

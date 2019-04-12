@@ -23,14 +23,22 @@ public class FutoshikiModel extends Model<Integer> {
         Integer value;
         boolean predefined;
 
+        this.domain = new ArrayList<>(IntStream.rangeClosed(1, dimensions).boxed().collect(Collectors.toList()));
+
+
         for(int i = 0; i < data.size(); i++ ) {
             String[] line = data.get(i).split(";");
 
             for(int j = 0; j < line.length; j++) {
                 value = Integer.parseInt(line[j]);
                 predefined = !value.equals(defaultValue);
+                Variable<Integer> variable = new PuzzleVariable(value, j, i, predefined);
 
-                variableList.add(new PuzzleVariable(value, j, i, predefined));
+                if(!predefined) {
+                    variable.setDomain(new ArrayList<>(IntStream.rangeClosed(1, dimensions).boxed().collect(Collectors.toList())));
+                }
+
+                variableList.add(variable);
             }
         }
     }
@@ -39,30 +47,29 @@ public class FutoshikiModel extends Model<Integer> {
         int lower_row, lower_col, higher_row, higher_col;
 
         for(int i = 0; i < data.size(); i++) {
-            String lower, higher;
-            String[] line = data.get(i).split(";");
+            if(data.get(i).length() > 0) {
+                String[] line = data.get(i).split(";");
 
-            lower = line[0];
-            higher = line[1];
+                lower_row = ((int) line[0].charAt(0)) - 65;
+                lower_col = ((int) line[0].charAt(1)) - 49;
 
-            lower_row = ((int) line[0].charAt(0)) - 65;
-            lower_col = ((int) line[0].charAt(1)) - 49;
+                higher_row = ((int) line[1].charAt(0)) - 65;
+                higher_col = ((int) line[1].charAt(1)) - 49;
 
-            higher_row = ((int) line[1].charAt(0)) - 65;
-            higher_col = ((int) line[1].charAt(1)) - 49;
+                Variable<Integer> lower_variable = variableList.get(lower_row * dimensions + lower_col);
+                Variable<Integer> higher_variable = variableList.get(higher_row * dimensions + higher_col);
 
-            Variable<Integer> lower_variable = variableList.get(lower_row * dimensions + lower_col);
-            Variable<Integer> higher_variable = variableList.get(higher_row * dimensions + higher_col);
+                lower_variable.appendConstrainedVariable(higher_variable);
+                higher_variable.appendConstrainedVariable(lower_variable);
 
-            lower_variable.appendConstraint(new LowerValue<>(lower_variable, higher_variable, defaultValue));
-            higher_variable.appendConstraint(new HigherValue<>(higher_variable, lower_variable, defaultValue));
+                lower_variable.appendConstraint(new LowerValue<>(lower_variable, higher_variable, defaultValue));
+                higher_variable.appendConstraint(new HigherValue<>(higher_variable, lower_variable, defaultValue));
+            }
         }
     }
 
     @Override
     void parseModel(List<String> data) {
-
-        domain = new ArrayList<>(IntStream.rangeClosed(1, dimensions).boxed().collect(Collectors.toList()));
 
         //loading variables
         List<String> variablesData = data.subList(1, dimensions + 1);

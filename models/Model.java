@@ -80,7 +80,9 @@ public abstract class Model<T extends Comparable<T>> {
                     constrainedVariables.add(variableList.get(j));
                 }
             }
+
             parentVariable.appendConstraint(new Unique<>(parentVariable, constrainedVariables, defaultValue));
+            parentVariable.appendConstrainedVariables(constrainedVariables);
         }
     }
 

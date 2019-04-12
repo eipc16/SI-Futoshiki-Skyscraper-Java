@@ -60,7 +60,7 @@ public class SkyscraperConstraint<T extends  Comparable<T>> implements Constrain
     }
 
     @Override
-    public List<Variable<T>> getConstrained() {
+    public List<Variable> getConstrained() {
         return null;
     }
 }
