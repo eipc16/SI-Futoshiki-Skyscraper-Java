@@ -2,6 +2,7 @@ package pp.pwr;
 
 import pp.pwr.algorithms.BackTracking;
 import pp.pwr.algorithms.ConstraintSatisfactionProblem;
+import pp.pwr.algorithms.ForwardChecking;
 import pp.pwr.models.FutoshikiModel;
 
 public class Main {
@@ -11,8 +12,10 @@ public class Main {
 
 	    FutoshikiModel futoshikiModel = new FutoshikiModel(path);
         ConstraintSatisfactionProblem bt = new BackTracking(futoshikiModel);
-
+        ConstraintSatisfactionProblem fc = new ForwardChecking<>(futoshikiModel);
         bt.run();
         System.out.println(bt.getInfo());
+        fc.run();
+        System.out.println(fc.getInfo());
     }
 }

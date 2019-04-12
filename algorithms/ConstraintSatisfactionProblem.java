@@ -9,10 +9,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
-    private Model<T> model;
-    private List<Variable<T>> variablesToCheck;
-    private int activeVariablesSize;
-    private T defaultValue;
+    protected Model<T> model;
+    protected List<Variable<T>> variablesToCheck;
+    protected int activeVariablesSize;
+    protected T defaultValue;
 
     private double time;
     private int iterations, solutions;
@@ -21,6 +21,8 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
         this.model = model;
         this.variablesToCheck = model.getVariableList().stream().filter(x -> !x.isPredefined()).collect(Collectors.toList());
         this.activeVariablesSize = this.variablesToCheck.size();
+        this.defaultValue = model.getDefaultValue();
+
         this.time = 0;
         this.iterations = 0;
         this.solutions = 0;

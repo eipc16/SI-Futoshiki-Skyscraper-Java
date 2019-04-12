@@ -51,6 +51,10 @@ public abstract class Variable<T extends Comparable<T>> {
         constrainedVariables.add(variable);
     }
 
+    public Set<Variable<T>> getConstrainedVariables() {
+        return constrainedVariables;
+    }
+
     public boolean validate() {
         for (ConstraintInterface cons: constraints) {
             if(!cons.check()) {
