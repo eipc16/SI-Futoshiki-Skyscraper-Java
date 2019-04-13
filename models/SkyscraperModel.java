@@ -15,8 +15,8 @@ public class SkyscraperModel extends Model<Integer> {
     Map<String, List<Integer>> constraintValues;
     List<Integer> top, bottom, left, right;
 
-    public SkyscraperModel(String filePath) {
-        super(filePath, 0);
+    public SkyscraperModel(String filePath, String fileName) {
+        super(filePath, fileName,0);
 
         constraintValues = new HashMap<>();
 
@@ -102,11 +102,11 @@ public class SkyscraperModel extends Model<Integer> {
         //set up variables to defaultValue
         initVariables();
 
-        //set up unique constraints
-        setUniqueConstraints();
-
         //set up skyscraper constraints
         setUpSkyscraperConstraints(data);
+
+        //set up unique constraints
+        setUniqueConstraints();
     }
 
     @Override
@@ -132,5 +132,10 @@ public class SkyscraperModel extends Model<Integer> {
         stringBuilder.append(constraintValues.get("D").stream().map(v -> String.format("[%d]", v)).collect(Collectors.joining("\t")));
 
         return stringBuilder.toString();
+    }
+
+    @Override
+    public void dumpHTML(String methodName) {
+
     }
 }

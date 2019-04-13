@@ -3,9 +3,11 @@ package pp.pwr.algorithms;
 import pp.pwr.models.Model;
 import pp.pwr.variables.Variable;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class ForwardChecking<T extends Comparable<T>> extends ConstraintSatisfactionProblem<T> {
-    public ForwardChecking(Model<T> model) {
-        super(model);
+    public ForwardChecking(Model<T> model, boolean htmlDump) {
+        super(model, "forwardchecking", htmlDump);
     }
 
     public boolean hasPossibleValue(Variable<T> variable) {

@@ -6,6 +6,11 @@ import pp.pwr.constraints.Unique;
 import pp.pwr.variables.PuzzleVariable;
 import pp.pwr.variables.Variable;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,8 +18,8 @@ import java.util.stream.IntStream;
 
 public class FutoshikiModel extends Model<Integer> {
 
-    public FutoshikiModel(String filePath) {
-        super(filePath,0);
+    public FutoshikiModel(String filePath, String fileName) {
+        super(filePath, fileName,0);
 
         loadModel();
     }
@@ -99,5 +104,42 @@ public class FutoshikiModel extends Model<Integer> {
         }
 
         return stringBuilder.toString();
+    }
+
+    @Override
+    public void dumpHTML(String methodName) {
+        StringBuilder stringBuilder = new StringBuilder();
+        List<Variable<Integer>> row = variableList.subList(0, dimensions);
+        stringBuilder.append(String.format("<table class=\"%s\">\n", methodName));
+        stringBuilder.append(String.format("<caption>File: %s</caption>", fileName));
+        stringBuilder.append("\t<tr>\n");
+        stringBuilder.append("\t\t<td></td>\n");
+        row.stream()
+                .map(v -> String.format("\t\t<td class=\"columnLabel\">%s</td>\n", v.getName().charAt(1)))
+                .forEach(stringBuilder::append);
+        stringBuilder.append("\t</tr>\n");
+        for(int i = 0; i < dimensions; i++) {
+            int row_start = i * dimensions;
+            row = variableList.subList(row_start, row_start + dimensions);
+
+            stringBuilder.append("\t<tr class=\"row\">\n");
+            stringBuilder.append(String.format("\t\t<td class=\"rowLabel\">%s</td>\n", row.get(0).getName().charAt(0)));
+
+            row.stream()
+                    .map(v -> String.format("\t\t<td class=\"cellValue\">%s</td>\n", v.getValue().toString()))
+                    .forEach(stringBuilder::append);
+
+            //stringBuilder.append(row.stream().map(v -> v.getValue().toString()).collect(Collectors.joining("\n")));
+            stringBuilder.append("\t</tr>\n");
+        }
+        stringBuilder.append("</table>");
+
+        Path path = Paths.get(String.format("pp/pwr/Data/HTML/%s.html", fileName));
+
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path)){
+            bufferedWriter.write(stringBuilder.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

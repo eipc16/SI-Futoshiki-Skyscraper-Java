@@ -6,12 +6,10 @@ import pp.pwr.variables.Variable;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,13 +21,16 @@ public abstract class Model<T extends Comparable<T>> {
     T defaultValue;
 
     String filePath;
+    String fileName;
     int dimensions;
 
-    public Model(String filePath, T defaultValue) {
+    public Model(String filePath, String fileName, T defaultValue) {
         this.filePath = filePath;
         this.defaultValue = defaultValue;
         this.variableList = new ArrayList<>();
         this.constraintList = new ArrayList<>();
+
+        this.fileName = fileName;
     }
 
     void loadModel() {
@@ -81,6 +82,12 @@ public abstract class Model<T extends Comparable<T>> {
                 }
             }
 
+            for(Variable<T> v: constrainedVariables) {
+                if (parentVariable.isPredefined()) {
+                    v.removePossibleValue(parentVariable.getValue());
+                }
+            }
+
             parentVariable.appendConstraint(new Unique<>(parentVariable, constrainedVariables, defaultValue));
             parentVariable.appendConstrainedVariables(constrainedVariables);
         }
@@ -106,4 +113,6 @@ public abstract class Model<T extends Comparable<T>> {
     abstract void parseModel(List<String> data);
 
     public abstract String getBoard();
+
+    public abstract void dumpHTML(String methodName);
 }

@@ -15,7 +15,10 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     private double time;
     private int iterations, solutions, backtracks;
 
-    public ConstraintSatisfactionProblem(Model<T> model) {
+    String label;
+    boolean htmlDump;
+
+    public ConstraintSatisfactionProblem(Model<T> model, String label, boolean htmlDump) {
         this.model = model;
         this.variablesToCheck = model.getVariableList().stream().filter(x -> !x.isPredefined()).collect(Collectors.toList());
         this.activeVariablesSize = this.variablesToCheck.size();
@@ -25,37 +28,44 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
         this.iterations = 0;
         this.backtracks = 0;
         this.solutions = 0;
+
+        this.label = label;
+        this.htmlDump = htmlDump;
     }
 
     private boolean solve(int depth) {
-        this.iterations++;
+
+        //System.out.println(model.getBoard());
 
         if (depth == activeVariablesSize) {
             return true;
         }
 
-        if(iterations % 10000000 == 0) {
-            System.out.println(model.getBoard());
-        }
-
         Variable<T> variable = variablesToCheck.get(depth);
-
         for(T value: variable.getDomain()) {
             variable.update(value);
+            this.iterations++;
+            if (validate(variable)) {
+                if (solve(depth + 1)) {
+                    if(depth + 1 == activeVariablesSize) {
+                        this.solutions += 1;
 
-            if (validate(variable) && solve(depth + 1)) {
-                if (depth + 1 == activeVariablesSize) {
-                    System.out.println("Found solution");
-                    this.solutions += 1;
-                    System.out.println(model.getBoard());
-                    System.out.println(getInfo());
+                        System.out.println("Found solution");
+                        System.out.println(model.getBoard());
+                        System.out.println(getInfo());
 
-                    variable.update(model.getDefaultValue());
+                        if(htmlDump) {
+                            model.dumpHTML(label);
+                        }
 
-                    return true;
+                        variable.update(model.getDefaultValue());
+                    }
                 }
+            } else {
+                this.backtracks++;
             }
         }
+
         variable.update(model.getDefaultValue());
         return false;
     }
