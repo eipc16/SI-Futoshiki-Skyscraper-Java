@@ -1,5 +1,6 @@
 package pp.pwr.algorithms;
 
+import pp.pwr.heuristics.VariableHeuristic;
 import pp.pwr.models.Model;
 import pp.pwr.variables.Variable;
 
@@ -12,17 +13,21 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     protected int activeVariablesSize;
     protected T defaultValue;
 
+    private VariableHeuristic<T> variableHeuristic;
+
     private double time;
     Long iterations, solutions, backtracks;
 
     private String label;
     private boolean htmlDump;
 
-    public ConstraintSatisfactionProblem(Model<T> model, String label, boolean htmlDump) {
+    public ConstraintSatisfactionProblem(Model<T> model, VariableHeuristic<T> variableHeuristic, String label, boolean htmlDump) {
         this.model = model;
-        this.variablesToCheck = model.getVariableList().stream().filter(x -> !x.isPredefined()).collect(Collectors.toList());
-        this.activeVariablesSize = this.variablesToCheck.size();
+        //this.variablesToCheck = model.getVariableList().stream().filter(x -> !x.isPredefined()).collect(Collectors.toList());
+        //this.variablesToCheck = variableHeuristic.getVariables();
+        this.activeVariablesSize = variableHeuristic.size();
         this.defaultValue = model.getDefaultValue();
+        this.variableHeuristic = variableHeuristic;
 
         this.time = 0;
         this.iterations = 0L;
@@ -42,8 +47,12 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
             return true;
         }
 
+        if (50000 < iterations && iterations < 50100) {
+            System.out.println(model.getBoard());
+        }
 
-        Variable<T> variable = variablesToCheck.get(depth);
+
+        Variable<T> variable = variableHeuristic.get(depth);
         boolean deadend = true;
 
         for(T value: variable.getDomain()) {
@@ -87,7 +96,7 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     }
 
     public String getInfo() {
-        return String.format("Elapsed time: %5.2f | Iterations: %8d | Backtracks: %8d | Solutions: %4d", (System.nanoTime() - time) / 1000000000, iterations, backtracks, solutions);
+        return String.format("Elapsed time: %5.2f | Iterations: %8d | Deadends: %8d | Solutions: %4d", (System.nanoTime() - time) / 1000000000, iterations, backtracks, solutions);
     }
 
     boolean validate(Variable<T> variable) {

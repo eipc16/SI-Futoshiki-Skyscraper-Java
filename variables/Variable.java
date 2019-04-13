@@ -120,6 +120,16 @@ public abstract class Variable<T extends Comparable<T>> {
         return true;
     }
 
+    public int countConstrainedVariablesEqualsDefault(T defaultValue) {
+        int count = 0;
+        for(Variable<T> v: constrainedVariables) {
+            if(v.getValue().equals(defaultValue)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public boolean sameValue(Variable other) {
         return value.equals(other.value);
     }
