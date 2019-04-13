@@ -8,7 +8,7 @@ import pp.pwr.models.FutoshikiModel;
 public class Main {
 
     public static void main(String[] args) {
-        String fileName = "test_futo_6_0";
+        String fileName = "test_futo_9_0";
 	    String path = String.format("pp/pwr/Data/Research/%s.txt", fileName);
 
         Thread t1 = new Thread(() -> {

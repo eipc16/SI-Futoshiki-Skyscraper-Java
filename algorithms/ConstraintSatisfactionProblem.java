@@ -13,10 +13,10 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     protected T defaultValue;
 
     private double time;
-    private int iterations, solutions, backtracks;
+    Long iterations, solutions, backtracks;
 
-    String label;
-    boolean htmlDump;
+    private String label;
+    private boolean htmlDump;
 
     public ConstraintSatisfactionProblem(Model<T> model, String label, boolean htmlDump) {
         this.model = model;
@@ -25,9 +25,9 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
         this.defaultValue = model.getDefaultValue();
 
         this.time = 0;
-        this.iterations = 0;
-        this.backtracks = 0;
-        this.solutions = 0;
+        this.iterations = 0L;
+        this.backtracks = 0L;
+        this.solutions = 0L;
 
         this.label = label;
         this.htmlDump = htmlDump;
@@ -36,19 +36,25 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     private boolean solve(int depth) {
 
         //System.out.println(model.getBoard());
+        this.iterations++;
 
         if (depth == activeVariablesSize) {
             return true;
         }
 
+
         Variable<T> variable = variablesToCheck.get(depth);
+        boolean deadend = true;
+
         for(T value: variable.getDomain()) {
             variable.update(value);
-            this.iterations++;
+            //this.iterations++;
             if (validate(variable)) {
+                deadend = false;
+
                 if (solve(depth + 1)) {
                     if(depth + 1 == activeVariablesSize) {
-                        this.solutions += 1;
+                        this.solutions++;
 
                         System.out.println("Found solution");
                         System.out.println(model.getBoard());
@@ -61,9 +67,11 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
                         variable.update(model.getDefaultValue());
                     }
                 }
-            } else {
-                this.backtracks++;
             }
+        }
+
+        if(deadend) {
+            this.backtracks++;
         }
 
         variable.update(model.getDefaultValue());
@@ -72,8 +80,8 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
 
     public void run() {
         this.time = System.nanoTime();
-        this.iterations = 0;
-        this.solutions = 0;
+        this.iterations = 0L;
+        this.solutions = 0L;
 
         solve(0);
     }
