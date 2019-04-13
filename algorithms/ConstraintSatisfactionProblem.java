@@ -47,11 +47,6 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
             return true;
         }
 
-        if (50000 < iterations && iterations < 50100) {
-            System.out.println(model.getBoard());
-        }
-
-
         Variable<T> variable = variableHeuristic.get(depth);
         boolean deadend = true;
 
