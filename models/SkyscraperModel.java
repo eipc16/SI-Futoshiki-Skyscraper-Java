@@ -6,6 +6,11 @@ import pp.pwr.constraints.Unique;
 import pp.pwr.variables.PuzzleVariable;
 import pp.pwr.variables.Variable;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -136,6 +141,49 @@ public class SkyscraperModel extends Model<Integer> {
 
     @Override
     public void dumpHTML(String methodName) {
+        StringBuilder stringBuilder = new StringBuilder();
+        List<Variable<Integer>> row = variableList.subList(0, dimensions);
+        stringBuilder.append(String.format("<table class=\"%s\">\n", methodName));
+        stringBuilder.append(String.format("<caption>File: %s</caption>", fileName));
+        stringBuilder.append("\t<tr>\n");
+        stringBuilder.append("\t\t<td class=\"constraintLabel\"></td>\n");
 
+        constraintValues.get("G")
+                .stream()
+                .map(v -> String.format("\t\t<td class=\"contraintLabel\">%s</td>\n", v))
+                .forEach(stringBuilder::append);
+        stringBuilder.append("\t\t<td class=\"constraintLabel\"></td>\n");
+        stringBuilder.append("\t</tr>\n");
+        for(int i = 0; i < dimensions; i++) {
+            int row_start = i * dimensions;
+            row = variableList.subList(row_start, row_start + dimensions);
+
+            stringBuilder.append("\t<tr class=\"row\">\n");
+            stringBuilder.append(String.format("\t\t<td class=\"contraintLabel\">%s</td>\n", constraintValues.get("L").get(i)));
+
+            row.stream()
+                    .map(v -> String.format("\t\t<td class=\"cellValue\">%s</td>\n", v.getValue().toString()))
+                    .forEach(stringBuilder::append);
+
+            stringBuilder.append(String.format("\t\t<td class=\"contraintLabel\">%s</td>\n", constraintValues.get("P").get(i)));
+
+            stringBuilder.append("\t</tr>\n");
+        }
+        stringBuilder.append("\t\t<td class=\"constraintLabel\"></td>\n");
+        constraintValues.get("D")
+                .stream()
+                .map(v -> String.format("\t\t<td class=\"constraintLabel\">%s</td>\n", v))
+                .forEach(stringBuilder::append);
+        stringBuilder.append("\t\t<td class=\"constraintLabel\"></td>\n");
+
+        stringBuilder.append("</table>");
+
+        Path path = Paths.get(String.format("pp/pwr/Data/HTML/%s.html", fileName));
+
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path)){
+            bufferedWriter.write(stringBuilder.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
