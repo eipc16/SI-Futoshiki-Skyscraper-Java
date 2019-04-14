@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class LeastOccurencesValueHeuristic<T extends Comparable<T>> extends ValueHeuristic<T> {
+public class MostOccurencesValueHeuristic<T extends Comparable<T>> extends ValueHeuristic<T> {
 
     @Override
     public List<T> getDomain(Variable<T> variable) {

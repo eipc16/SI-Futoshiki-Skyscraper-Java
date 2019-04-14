@@ -13,7 +13,7 @@ public class LeastConstrainingValueHeuristic<T extends Comparable<T>> extends Va
     public List<T> getDomain(Variable<T> variable) {
         List<T> domain = variable.getDomain();
 
-        return domain.stream().sorted(Comparator.comparing(v ->this.countPossibleChildrenValues(variable, v))).collect(Collectors.toList());
+        return domain.stream().sorted(Comparator.comparing(v ->this.countPossibleChildrenValues(variable, v), Comparator.reverseOrder())).collect(Collectors.toList());
     }
 
     public int countPossibleChildrenValues(Variable<T> variable, T value) {
