@@ -1,14 +1,13 @@
 package pp.pwr.algorithms;
 
-import pp.pwr.heuristics.VariableHeuristic;
+import pp.pwr.heuristics.ValueHeuristics.ValueHeuristic;
+import pp.pwr.heuristics.VariableHeuristics.VariableHeuristic;
 import pp.pwr.models.Model;
 import pp.pwr.variables.Variable;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class ForwardChecking<T extends Comparable<T>> extends ConstraintSatisfactionProblem<T> {
-    public ForwardChecking(Model<T> model, VariableHeuristic variableHeuristic, boolean htmlDump) {
-        super(model, variableHeuristic, "forwardchecking", htmlDump);
+    public ForwardChecking(Model<T> model, VariableHeuristic<T> variableHeuristic, ValueHeuristic<T> valueHeuristic, boolean htmlDump) {
+        super(model, variableHeuristic, valueHeuristic, "forwardchecking", htmlDump);
     }
 
     public boolean hasPossibleValue(Variable<T> variable) {

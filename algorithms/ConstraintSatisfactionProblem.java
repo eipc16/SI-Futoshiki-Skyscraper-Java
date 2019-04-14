@@ -1,11 +1,11 @@
 package pp.pwr.algorithms;
 
-import pp.pwr.heuristics.VariableHeuristic;
+import pp.pwr.heuristics.ValueHeuristics.ValueHeuristic;
+import pp.pwr.heuristics.VariableHeuristics.VariableHeuristic;
 import pp.pwr.models.Model;
 import pp.pwr.variables.Variable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     protected Model<T> model;
@@ -14,6 +14,7 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     protected T defaultValue;
 
     private VariableHeuristic<T> variableHeuristic;
+    private ValueHeuristic<T> valueHeuristic;
 
     private double time;
     Long iterations, solutions, backtracks;
@@ -21,13 +22,15 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     private String label;
     private boolean htmlDump;
 
-    public ConstraintSatisfactionProblem(Model<T> model, VariableHeuristic<T> variableHeuristic, String label, boolean htmlDump) {
+    public ConstraintSatisfactionProblem(Model<T> model, VariableHeuristic<T> variableHeuristic, ValueHeuristic<T> valueHeuristic, String label, boolean htmlDump) {
         this.model = model;
         //this.variablesToCheck = model.getVariableList().stream().filter(x -> !x.isPredefined()).collect(Collectors.toList());
         //this.variablesToCheck = variableHeuristic.getVariables();
         this.activeVariablesSize = variableHeuristic.size();
         this.defaultValue = model.getDefaultValue();
+
         this.variableHeuristic = variableHeuristic;
+        this.valueHeuristic = valueHeuristic;
 
         this.time = 0;
         this.iterations = 0L;
@@ -48,9 +51,11 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
         }
 
         Variable<T> variable = variableHeuristic.get(depth);
+        List<T> variableDomain = valueHeuristic.getDomain(variable);
+
         boolean deadend = true;
 
-        for(T value: variable.getDomain()) {
+        for(T value: variableDomain) {
             variable.update(value);
             //this.iterations++;
             if (validate(variable)) {
@@ -60,7 +65,7 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
                     if(depth + 1 == activeVariablesSize) {
                         this.solutions++;
 
-                        System.out.println("Found solution");
+                        System.out.println(String.format("Found solution: [%s, %s]", variableHeuristic.getClass().getSimpleName(), valueHeuristic.getClass().getSimpleName()));
                         System.out.println(model.getBoard());
                         System.out.println(getInfo());
 
@@ -91,7 +96,7 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
     }
 
     public String getInfo() {
-        return String.format("Elapsed time: %5.2f | Iterations: %8d | Deadends: %8d | Solutions: %4d", (System.nanoTime() - time) / 1000000000, iterations, backtracks, solutions);
+        return String.format("(%s, %s)\nElapsed time: %5.2f | Iterations: %8d | Deadends: %8d | Solutions: %4d", variableHeuristic.getClass().getSimpleName(), valueHeuristic.getClass().getSimpleName(), (System.nanoTime() - time) / 1000000000, iterations, backtracks, solutions);
     }
 
     boolean validate(Variable<T> variable) {

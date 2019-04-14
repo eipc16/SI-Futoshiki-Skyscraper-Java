@@ -1,4 +1,4 @@
-package pp.pwr.heuristics;
+package pp.pwr.heuristics.VariableHeuristics;
 
 import pp.pwr.models.Model;
 import pp.pwr.variables.Variable;

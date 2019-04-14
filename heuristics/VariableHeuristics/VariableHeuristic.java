@@ -1,12 +1,13 @@
-package pp.pwr.heuristics;
+package pp.pwr.heuristics.VariableHeuristics;
 
+import pp.pwr.heuristics.Heuristic;
 import pp.pwr.models.Model;
 import pp.pwr.variables.Variable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class VariableHeuristic<T extends Comparable<T>> {
+public abstract class VariableHeuristic<T extends Comparable<T>> extends Heuristic<T> {
 
     List<Variable<T>> variablesToCheck;
     Model<T> model;

@@ -1,4 +1,4 @@
-package pp.pwr.heuristics;
+package pp.pwr.heuristics.VariableHeuristics;
 
 import pp.pwr.models.Model;
 import pp.pwr.variables.Variable;
@@ -21,24 +21,6 @@ public class MostConstrainedVariableHeuristic<T extends Comparable<T>> extends V
                 .filter(v -> v.getValue().equals(model.getDefaultValue()))
                 .min(Comparator.comparing(this::countPossibleValues))
                 .orElseThrow(NoSuchFieldError::new);
-    }
-
-    public Integer countPossibleValues(Variable<T> variable) {
-        int count = 0;
-
-        T startValue = variable.getValue();
-
-        for(T value: variable.getDomain()) {
-            variable.update(value);
-
-            if(variable.validate()) {
-                count++;
-            }
-        }
-
-        variable.update(startValue);
-
-        return count;
     }
 
     @Override
