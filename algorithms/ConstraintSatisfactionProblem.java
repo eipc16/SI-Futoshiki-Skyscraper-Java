@@ -1,8 +1,10 @@
 package pp.pwr.algorithms;
 
+import pp.pwr.heuristics.ValueHeuristics.LeastConstrainingValueHeuristic;
 import pp.pwr.heuristics.ValueHeuristics.ValueHeuristic;
 import pp.pwr.heuristics.VariableHeuristics.VariableHeuristic;
 import pp.pwr.models.Model;
+import pp.pwr.variables.PuzzleVariable;
 import pp.pwr.variables.Variable;
 
 import java.util.List;
@@ -53,6 +55,9 @@ public class ConstraintSatisfactionProblem<T extends Comparable<T>> {
         Variable<T> variable = variableHeuristic.get(depth);
         List<T> variableDomain = valueHeuristic.getDomain(variable);
 
+//        if (valueHeuristic instanceof LeastConstrainingValueHeuristic) {
+//            System.out.println(String.format("Zmienna: %s | Domena: %s", variable.getName(), variableDomain.toString()));
+//        }
         boolean deadend = true;
 
         for(T value: variableDomain) {

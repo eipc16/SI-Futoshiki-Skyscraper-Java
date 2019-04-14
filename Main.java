@@ -3,19 +3,19 @@ package pp.pwr;
 import pp.pwr.algorithms.BackTracking;
 import pp.pwr.algorithms.ConstraintSatisfactionProblem;
 import pp.pwr.algorithms.ForwardChecking;
-import pp.pwr.heuristics.ValueHeuristics.LeastConstrainingValueHeuristic;
-import pp.pwr.heuristics.ValueHeuristics.OrderedValueHeuristic;
+import pp.pwr.heuristics.ValueHeuristics.MostOccurencesValueHeuristic;
 import pp.pwr.heuristics.ValueHeuristics.ValueHeuristic;
 import pp.pwr.heuristics.VariableHeuristics.MostConstrainedVariableHeuristic;
 import pp.pwr.heuristics.VariableHeuristics.OrderedVariableHeuristic;
 import pp.pwr.heuristics.VariableHeuristics.VariableHeuristic;
 import pp.pwr.models.FutoshikiModel;
 import pp.pwr.models.Model;
+import pp.pwr.models.SkyscraperModel;
 
 public class Main {
 
     public static void main(String[] args) {
-        String fileName = args[0];
+        String fileName = "test_sky_4_0";
 	    String path = String.format("pp/pwr/Data/Research/%s.txt", fileName);
         System.out.println(fileName + " working on Google Server :)");
 
@@ -23,10 +23,13 @@ public class Main {
 
         Thread t1 = new Thread(() -> {
             //System.out.println("Backtracking started!");
-            Model<Integer> model = new FutoshikiModel(path, fileName);
+            //Model<Integer> model = new FutoshikiModel(path, fileName);
+            Model<Integer> model = new SkyscraperModel(path, fileName);
             //VariableHeuristic heuristic = new OrderedVariableHeuristic<>(model);
             VariableHeuristic<Integer> heuristic = new OrderedVariableHeuristic<>(model);
-            ValueHeuristic<Integer> valueHeuristic = new OrderedValueHeuristic<>();
+            //ValueHeuristic<Integer> valueHeuristic = new OrderedValueHeuristic<>();
+            //ValueHeuristic<Integer> valueHeuristic = new LeastConstrainingValueHeuristic<>();
+            ValueHeuristic<Integer> valueHeuristic = new MostOccurencesValueHeuristic<>();
             ConstraintSatisfactionProblem bt;
             if(method.equals("forward")) {
                 bt = new ForwardChecking<>(model, heuristic, valueHeuristic, false);
@@ -40,11 +43,12 @@ public class Main {
 
         Thread t2 = new Thread(() -> {
             //System.out.println("Forwardchecking started!");
-            Model<Integer> model2 = new FutoshikiModel(path, fileName);
+            //Model<Integer> model2 = new FutoshikiModel(path, fileName);
+            Model<Integer> model2 = new SkyscraperModel(path, fileName);
             //VariableHeuristic<Integer> heuristic2 = new OrderedVariableHeuristic<>(model2);
             VariableHeuristic<Integer> heuristic2 = new MostConstrainedVariableHeuristic<>(model2);
-            //ValueHeuristic<Integer> valueHeuristic2 = new LeastConstrainingValueHeuristic<>();
-            ValueHeuristic<Integer> valueHeuristic2 = new OrderedValueHeuristic<>();
+            ValueHeuristic<Integer> valueHeuristic2 = new MostOccurencesValueHeuristic<>();
+            //ValueHeuristic<Integer> valueHeuristic2 = new OrderedValueHeuristic<>();
             ConstraintSatisfactionProblem fc;
             if(method.equals("forward")) {
                 System.out.println("Forward");
