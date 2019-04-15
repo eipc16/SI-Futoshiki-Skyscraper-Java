@@ -92,12 +92,6 @@ public class SkyscraperModel extends Model<Integer> {
             variableList.get(i).appendConstraint(new SkyscraperConstraint<>(row, constraintValues.get("L").get(i / dimensions), constraintValues.get("P").get(i / dimensions), defaultValue));
             variableList.get(i).appendConstrainedVariables(row);
         }
-
-        for(int i = 0; i < variableList.size(); i++) {
-            if(variableList.get(i).isPredefined()) {
-                System.out.println(variableList.get(i).getName());
-            }
-        }
     }
 
     @Override
@@ -150,7 +144,7 @@ public class SkyscraperModel extends Model<Integer> {
 
         constraintValues.get("G")
                 .stream()
-                .map(v -> String.format("\t\t<td class=\"contraintLabel\">%s</td>\n", v))
+                .map(v -> String.format("\t\t<td class=\"constraintLabel\">%s</td>\n", v))
                 .forEach(stringBuilder::append);
         stringBuilder.append("\t\t<td class=\"constraintLabel\"></td>\n");
         stringBuilder.append("\t</tr>\n");
@@ -159,13 +153,13 @@ public class SkyscraperModel extends Model<Integer> {
             row = variableList.subList(row_start, row_start + dimensions);
 
             stringBuilder.append("\t<tr class=\"row\">\n");
-            stringBuilder.append(String.format("\t\t<td class=\"contraintLabel\">%s</td>\n", constraintValues.get("L").get(i)));
+            stringBuilder.append(String.format("\t\t<td class=\"constraintLabel\">%s</td>\n", constraintValues.get("L").get(i)));
 
             row.stream()
                     .map(v -> String.format("\t\t<td class=\"cellValue\">%s</td>\n", v.getValue().toString()))
                     .forEach(stringBuilder::append);
 
-            stringBuilder.append(String.format("\t\t<td class=\"contraintLabel\">%s</td>\n", constraintValues.get("P").get(i)));
+            stringBuilder.append(String.format("\t\t<td class=\"constraintLabel\">%s</td>\n", constraintValues.get("P").get(i)));
 
             stringBuilder.append("\t</tr>\n");
         }

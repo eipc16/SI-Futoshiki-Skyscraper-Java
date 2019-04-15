@@ -22,8 +22,11 @@ public class MostOccurencesValueHeuristic<T extends Comparable<T>> extends Value
     public int countOccurencesInChilds(Variable<T> variable, T value) {
         int count = 0;
         Set<Variable<T>> constrainedVariables = variable.getConstrainedVariables();
-
         for(Variable<T> child: constrainedVariables) {
+            if(child.getValue().equals(value)) {
+                return -1;
+            }
+
             if(child.getDomain().contains(value)) {
                 count++;
             }
